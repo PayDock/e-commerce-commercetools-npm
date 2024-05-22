@@ -48,6 +48,7 @@ export default class PaydockCommercetoolWidget {
         this.billingInfo = {};
         this.shippingInfo = {};
         this.cartItems = [];
+        this.existingCard = false;
         this.referenceId = null;
         this.paymentId = configuration.paymentId;
         this.accessToken = null;
@@ -601,23 +602,17 @@ export default class PaydockCommercetoolWidget {
                     request_shipping: false,
                     show_billing_address: true,
                     raw_data_initialization: {
-                        google: {
-                            type: "CARD",
-                            parameters: {
-                                allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"], // TODO evaluate "CRYPTOGRAM_3DS"
-                                allowedCardNetworks: [
-                                    "AMEX",
-                                    "DISCOVER",
-                                    "INTERAC",
-                                    "JCB",
-                                    "MASTERCARD",
-                                    "VISA",
-                                ],
-                                billingAddressRequired: true,
-                                billingAddressParameters: {
-                                    format: "FULL",
-                                },
-                            },
+                        apple: {
+                            countryCode: this.billingInfo.address_country,
+                            currencyCode: this.currency,
+                            merchantCapabilities: ["supports3DS","supportsCredit","supportsDebit"],
+                            supportedNetworks: ["visa","masterCard","amex","discover"],
+                            requiredBillingContactFields: ["name","postalAddress"],
+                            total: {
+                                label: "Total",
+                                amount: this.amount,
+                                type: "final",
+                            }
                         },
                     },
                 });
@@ -713,6 +708,11 @@ export default class PaydockCommercetoolWidget {
 
         if (this.type === 'card') {
             if (['In-built 3DS', 'Standalone 3DS'].includes(configMethod.card_3ds)) {
+
+                if(this.existingCard && this.hasVaultToken()){
+                    return result;
+                }
+
                 let charge3dsId;
                 if (configMethod.card_3ds === 'In-built 3DS') {
                     charge3dsId = await this.initCardInBuild3Ds(this.saveCard);
@@ -1263,6 +1263,9 @@ export default class PaydockCommercetoolWidget {
                                     this.vaultToken = credential.vault_token;
                                     const inputHidden = document.querySelector('[name="payment_source_card_token"]');
                                     inputHidden.value = this.vaultToken;
+                                    if(credential.customer_id !== undefined && credential.customer_id) {
+                                        this.existingCard = true;
+                                    }
                                 }
                             }
                         }
