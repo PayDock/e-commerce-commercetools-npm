@@ -70,7 +70,7 @@ import '@paydock-commercetools/paydock/dist/widget.css';
 
 The following example demonstrates how to initialize a payment session with Vue.js.
 
-Create an instance of Drop-in and then mount it to the container element created in the setup section. Detailed instructions describing how to create and mount Drop-in are as follows:
+To do this you must create an instance of Drop-in and then mount the instance to the container element created in the setup section. Detailed instructions describing how to create and mount Drop-in are as follows:
 
 
 ### 1. Load the Paydock script
@@ -213,7 +213,8 @@ widget.displayPaymentMethods(paymentMethod);
 ```javascript
 widget.loadWidget()
 ```
-init wallets and apm`s buttons
+Examples of the init wallets and apm`s buttons are as follows:
+
 ```javascript
 widget.initAPIMSButtons(type)
 widget.initWalletButtons(type)
@@ -257,18 +258,19 @@ widget.setCurrency(currencyCode)
 widget.currencyCode.setPaymentSource(paymentSource)
 widget.setAdditionalInfo(additionalInfo)
 ```
-For wallets you must set form validation state:
+3. For wallets you must set a validation state in the form validation state:
+
 ```javascript
 widget.setIsValidForm(true);
 ```
 
-3. Paydock gets the vault token for the payment.
+4. Paydock gets the vault token for the payment.
 
 ```javascript
 widget.getVaultToken()
 ```
 
-4. Paydock creates a payment by updating the existing Commercetools API "makePaymentRequest".
+5. Paydock creates a payment by updating the existing Commercetools API "makePaymentRequest".
 
 ### 6. Populate the createPayment function
 
@@ -280,7 +282,9 @@ createPayment({...})
 
  You must perform 3 actions in the createPayment function:
 
-1. Create payment. This sends a request to create a payment in the Paydock system through the extension. This uses the custom field makePaymentRequest where "widget.paymentId" is the unique payment ID from step 3, [Get Paydock Payment configuration](#3-get-paydock-payment-configuration).
+1. First you must create payment. 
+
+This sends a request to create a payment in the Paydock system through the extension. This uses the custom field makePaymentRequest where "widget.paymentId" is the unique payment ID from step 3, [Get Paydock Payment configuration](#3-get-paydock-payment-configuration).
 
 ```javascript
 //example for "Google Pay"
@@ -428,7 +432,7 @@ setCartItems([
 
 ### 8. Thank you page
 
-After making the payment, your customer is redirected to the Thankyou page. Text is then displayed depending on the completion status of the payment.
+After making the payment, your customer is redirected to the Thank you page. Text is then displayed depending on the completion status of the payment.
 
 If the status is pending 'yes', the following text displays:
 
@@ -438,7 +442,7 @@ If the status is pending 'yes', the following text displays:
 } 
 ```
 
-If the status is pending 'no', the following text is displayed:
+If the status is pending 'no', the following text displays:
 
 ```json
 {
