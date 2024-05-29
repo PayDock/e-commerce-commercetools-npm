@@ -6,7 +6,9 @@
 * [Install Paydock Commercetools](#install-paydock-commercetools)
 * [Embed your Script and Stylesheet](#embed-your-script-and-stylesheet)
 * [Create a DOM element for Drop-in](#create-a-dom-element-for-drop-in)
-* [Setup Drop-in](#create-a-dom-element-for-drop-in)
+* [Setup Drop-in](#setup-drop-in)
+* [Initialize the Payment Session](#initialize-the-payment-session)
+
 
 ## Overview
 
