@@ -1,5 +1,6 @@
 export default class PaydockCommercetoolWidget {
-    constructor({selector, type, configuration, userId, paymentButtonSelector, radioGroupName}) {
+    constructor({selector, type, configuration, userId, paymentButtonSelector, radioGroupName, iconPath = '/images/paydock'}) {
+        this.iconPath = iconPath.endsWith('/') ? iconPath.slice(0, -1) : iconPath;
         this.selector = selector;
         this.type = type;
         this.configuration = configuration;
@@ -412,10 +413,38 @@ export default class PaydockCommercetoolWidget {
         if (this.configuration.payment_methods[this.type]) {
             this.configuration.payment_methods[this.type].description = description;
         }
-        const methodName = document.createTextNode(title);
-        const italicElement = document.createElement('i');
-        italicElement.appendChild(methodName);
-        label.appendChild(italicElement);
+
+        let imageName = this.type;
+        const methodName = document.createElement('span')
+        methodName.textContent = title;
+        switch(this.type){
+            case 'card':
+                const logo = document.createElement('img');
+                const cartIcon = document.createElement('img');
+
+                logo.setAttribute('src',`${this.iconPath}/logo.png`)
+                cartIcon.setAttribute('src',`${this.iconPath}/icons/${imageName}.png`)
+
+                logo.className = 'paydock-payment-cart-logo'
+                cartIcon.className = 'paydock-payment-cart-icon'
+
+                label.appendChild(cartIcon);
+                label.appendChild(methodName);
+                label.appendChild(logo);
+                break;
+            case "afterpay_v1":
+            case 'afterpay_v2':
+                imageName = 'afterpay';
+            default:
+                const paymentIcon = document.createElement('img');
+
+                paymentIcon.setAttribute('src',`${this.iconPath}/icons/${imageName}.png`)
+
+                paymentIcon.className = `paydock-payment-${imageName}-logo`
+
+                label.appendChild(paymentIcon);
+                label.appendChild(methodName);
+        }
 
         methodContainer.appendChild(methodHead);
 
@@ -529,6 +558,7 @@ export default class PaydockCommercetoolWidget {
             }
 
             this.widget.interceptSubmitForm(this.selector);
+            this.widget.setEnv(this.configuration.sandbox_mode === 'Yes' ? 'sandbox' : 'production');
             this.widget.load();
         }
     }
@@ -550,13 +580,14 @@ export default class PaydockCommercetoolWidget {
         } else {
             const htmlBtnElem = document.querySelector('#paydockAPMsAfterpayButton');
             if (htmlBtnElem === null) widgetContainer.insertAdjacentHTML('afterBegin', '<div align="center" id="paydockAPMsAfterpayButton"></div>');
-            this.widget = new paydock.AfterpayCheckoutButton(this.selector,this.accessToken, configMethod.alternative_payment_methods_afterpay_v1_gateway_id);
+            this.widget = new paydock.AfterpayCheckoutButton(this.selector, this.accessToken, configMethod.alternative_payment_methods_afterpay_v1_gateway_id);
         }
         if (this.widget) {
             const inputHidden = document.querySelector('[name="payment_source_apm_token"]');
             if (inputHidden === null) widgetContainer.insertAdjacentHTML('afterend', '<input type="hidden" name="payment_source_apm_token">')
             this.widget.onFinishInsert('input[name="payment_source_apm_token"]', 'payment_source_token');
             this.widget.setMeta(this.getMetaData('afterpay_v1' === type));
+            this.widget.setEnv(this.configuration.sandbox_mode === 'Yes' ? 'sandbox' : 'production');
             this.widget.on('finish', () => {
                 if (this.paymentButtonElem) {
                     this.paymentButtonElem.click();
@@ -565,6 +596,7 @@ export default class PaydockCommercetoolWidget {
         }
         this.removeSpinner(this.selector);
     }
+
     async initWalletButtons(type) {
         if (this.widget) {
             return;
@@ -605,9 +637,9 @@ export default class PaydockCommercetoolWidget {
                         apple: {
                             countryCode: this.billingInfo.address_country,
                             currencyCode: this.currency,
-                            merchantCapabilities: ["supports3DS","supportsCredit","supportsDebit"],
-                            supportedNetworks: ["visa","masterCard","amex","discover"],
-                            requiredBillingContactFields: ["name","postalAddress"],
+                            merchantCapabilities: ["supports3DS", "supportsCredit", "supportsDebit"],
+                            supportedNetworks: ["visa", "masterCard", "amex", "discover"],
+                            requiredBillingContactFields: ["name", "postalAddress"],
                             total: {
                                 label: "Total",
                                 amount: this.amount,
@@ -668,7 +700,7 @@ export default class PaydockCommercetoolWidget {
         }
 
         if (widget) {
-            widget.setEnv('sandbox');
+            widget.setEnv(this.configuration.sandbox_mode === 'Yes' ? 'sandbox' : 'production');
             widget.onUnavailable(() => console.log("No wallet buttons available"));
             widget.onPaymentError((data) => console.log("The payment was not successful"));
             widget.onPaymentInReview((result) => {
@@ -709,7 +741,7 @@ export default class PaydockCommercetoolWidget {
         if (this.type === 'card') {
             if (['In-built 3DS', 'Standalone 3DS'].includes(configMethod.card_3ds)) {
 
-                if(this.existingCard && this.hasVaultToken()){
+                if (this.existingCard && this.hasVaultToken()) {
                     return result;
                 }
 
@@ -794,16 +826,16 @@ export default class PaydockCommercetoolWidget {
         }
 
 
-        if(billingLine2){
+        if (billingLine2) {
             paymentSource.address_line2 = billingLine2;
         }
-        if(shippingLine2){
-            data.shipping.address_line2  = shippingLine2;
+        if (shippingLine2) {
+            data.shipping.address_line2 = shippingLine2;
         }
 
-        let addressState =  this?.billingInfo?.address_state;
-        if(addressState){
-            paymentSource.address_state =  addressState;
+        let addressState = this?.billingInfo?.address_state;
+        if (addressState) {
+            paymentSource.address_state = addressState;
         }
 
         if ('apple-pay' === currentMethod.type) {
@@ -905,8 +937,8 @@ export default class PaydockCommercetoolWidget {
                 data.vault_type = 'session'
             }
 
-            let addressState =  this?.additionalInfo?.address_state;
-            if(addressState){
+            let addressState = this?.additionalInfo?.address_state;
+            if (addressState) {
                 data.address_state = addressState;
             }
             data.address_country = this.additionalInfo.address_country ?? '';
@@ -914,7 +946,7 @@ export default class PaydockCommercetoolWidget {
             data.address_city = this.additionalInfo.address_city ?? '';
             data.address_line1 = this.additionalInfo.address_line ?? '';
             let addressLine2 = this.additionalInfo.address_line2 ?? null;
-            if(addressLine2) {
+            if (addressLine2) {
                 data.address_line2 = addressLine2;
             }
             let response = await this.fetchWithToken(`${this.configuration.api_commercetools.url}${this.configuration.paymentId}`, {
@@ -973,18 +1005,50 @@ export default class PaydockCommercetoolWidget {
 
         const envVal = this.configuration.sandbox_mode === 'Yes' ? 'sandbox' : 'production'
 
+        const billingLine2 = this?.billingInfo?.address_line2 ?? null;
+        const shippingLine2 = this?.shippingInfo?.address_line2 ?? null;
+        const currency = this.currency ?? 'AUD';
         const preAuthData = {
             amount: this.amount,
-            currency: 'AUD', // this.currency
-        };
-
-        if (configMethod.card_3ds_flow === 'With vault' || forcePermanentVault) {
-            preAuthData.customer = {
+            currency: currency,
+            customer: {
+                first_name: this?.billingInfo?.first_name,
+                last_name: this?.billingInfo?.last_name,
+                email: this?.billingInfo?.email,
+                phone: this?.billingInfo?.phone,
                 payment_source: {
-                    vault_token: this.vaultToken,
-                    gateway_id: configMethod.card_gateway_id
+                    address_country: this?.billingInfo?.address_country,
+                    address_city: this?.billingInfo?.address_city,
+                    address_postcode: this?.billingInfo?.address_postcode,
+                    address_line1: this?.billingInfo?.address_line1
+                }
+            },
+            shipping: {
+                address_country: this?.shippingInfo?.address_country ?? this?.billingInfo?.address_country,
+                address_state: this?.shippingInfo?.address_state ?? this?.billingInfo?.address_state,
+                address_city: this?.shippingInfo?.address_city ?? this?.billingInfo?.address_city,
+                address_postcode: this?.shippingInfo?.address_postcode ?? this?.billingInfo?.address_postcode,
+                address_line1: (this.shippingInfo?.address_line1) ?? this?.billingInfo?.address_line1,
+                contact: {
+                    first_name: this?.shippingInfo?.first_name ?? this?.billingInfo?.first_name,
+                    last_name: this?.shippingInfo?.last_name ?? this?.billingInfo?.last_name,
+                    email: this?.shippingInfo?.email ?? this?.billingInfo?.email,
+                    phone: this?.shippingInfo?.phone ?? this?.billingInfo?.phone
                 }
             }
+        }
+
+        if (billingLine2) {
+            preAuthData.customer.address_line2 = billingLine2;
+        }
+        if (shippingLine2) {
+            preAuthData.shipping.address_line2 = shippingLine2;
+        }
+
+
+        if (configMethod.card_3ds_flow === 'With vault' || forcePermanentVault) {
+            preAuthData.customer.payment_source.vault_token = this.vaultToken;
+            preAuthData.customer.payment_source.gateway_id = configMethod.card_gateway_id;
         } else {
             preAuthData.token = this.paymentSource
         }
@@ -999,6 +1063,7 @@ export default class PaydockCommercetoolWidget {
         }
 
         this.canvas = new paydock.Canvas3ds(this.canvasSelector, preAuthResp._3ds.token);
+        this.canvas.setEnv(envVal)
         this.canvas.load();
 
         widgetContainer.classList.add('hide');
@@ -1036,6 +1101,7 @@ export default class PaydockCommercetoolWidget {
         const threeDsToken = await this.getStandalone3dsToken();
 
         this.canvas = new paydock.Canvas3ds(this.canvasSelector, threeDsToken);
+        this.canvas.setEnv(this.configuration.sandbox_mode === 'Yes' ? 'sandbox' : 'production');
         this.canvas.load();
 
         widgetContainer.classList.add('hide');
@@ -1145,8 +1211,8 @@ export default class PaydockCommercetoolWidget {
             address_line2: billingData?.value?.additionalStreetInfo ?? '',
             email: billingData?.value?.email ?? ''
         };
-        let addressState =  billingData?.value?.address_state ?? '';
-        if(addressState){
+        let addressState = billingData?.value?.address_state ?? '';
+        if (addressState) {
             dataAdditionalValue.address_state = addressState;
         }
 
@@ -1263,7 +1329,7 @@ export default class PaydockCommercetoolWidget {
                                     this.vaultToken = credential.vault_token;
                                     const inputHidden = document.querySelector('[name="payment_source_card_token"]');
                                     inputHidden.value = this.vaultToken;
-                                    if(credential.customer_id !== undefined && credential.customer_id) {
+                                    if (credential.customer_id !== undefined && credential.customer_id) {
                                         this.existingCard = true;
                                     }
                                 }

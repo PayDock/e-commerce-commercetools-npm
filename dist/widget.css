@@ -21,7 +21,7 @@
 #paydock-pay-afterpay_v2 button {
     width: 150px;
 }
-  
+
 .selected-saved-card .widget-paydock-checkbox,
 .selected-saved-card iframe {
     display: none!important;
@@ -30,7 +30,7 @@
 .selected-saved-bank .widget-paydock-checkbox {
     display: none!important;
 }
-  
+
 .widget-paydock-checkbox {
     margin: 10px 0 0 0!important;
     text-transform: initial!important;
@@ -197,10 +197,10 @@
     display: flex;
     align-items: center;
     position: relative;
+    flex-direction: column;
 }
 .paydock-widget_head img {
     vertical-align: middle;
-    margin: 0 5px;
     position: relative;
     z-index: 1;
 }
@@ -236,15 +236,9 @@
     position: relative;
     padding-right: 72px;
 }
-.paydock-widget_head label i:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    margin: auto;
-    width: 72px;
-    height: 18px;
+.paydock-widget_head label img {
+    margin-left: 5px;
+    height: 25px;
     background-repeat: no-repeat;
   }
   #paydockAPMsAfterpayButton,
@@ -304,7 +298,7 @@
     border-top: 4px solid #3498db;
     border-radius: 50%;
     width: 40px;
-    height: 40px; 
+    height: 40px;
     animation: spin 1s linear infinite;
     margin: auto;
     position: absolute;
@@ -318,4 +312,32 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+.paydock-widget_head label img.paydock-payment-cart-icon {
+    margin: auto 23px;
+}
+.paydock-widget_head label img.paydock-payment-cart-logo {
+    margin-left: auto;
+}
+.paydock-widget_head label span  {
+    font-weight: 500;
+    min-width: max-content;
+    margin-left: 10px;
+}
+.paydock-widget_head label img.paydock-payment-apple-pay-logo {
+    margin: -1px 11px;
+}
+.paydock-widget_head label img.paydock-payment-google-pay-logo {
+    margin: -1px 17px;
+}
+.paydock-widget_head label img.paydock-payment-afterpay-logo {
+    margin: auto 6px;
+}
+.paydock-widget_head label img.paydock-payment-zippay-logo {
+    height: 20px;
+    margin: -6px 13px 0px;
+}
+.paydock-widget_head label img.paydock-payment-paypal_smart-logo {
+    height: 20px;
+    margin-top: 2px;
 }
