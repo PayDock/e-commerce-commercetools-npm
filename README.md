@@ -1,13 +1,22 @@
 # Paydock Commercetools
 
-Paydock commercetools provides you with the building blocks to create a checkout experience for your shoppers, allowing
-them to pay using the payment method of their choice.
+## Table of Contents
 
-# Installation
+* [Overview](##overview)
+* [Install Paydock Commercetools](#install-paydock-commercetools)
+* [Embed your Script and Stylesheet](#embed-your-script-and-stylesheet)
+* [Create a DOM element for Drop-in](#create-a-dom-element-for-drop-in)
+* [Setup Drop-in](#setup-drop-in)
+* [Initialize the Payment Session](#initialize-the-payment-session)
 
-## Get paydock commercetools
 
-### npm or yarn (recommended)
+## Overview
+
+Create an end-to-end checkout experience for your shoppers using Paydock's Commercetools.
+
+## Install Paydock Commercetools
+
+1. Install the Paydock Commercetools using either npm or yarn. The two commands for this are as follows:
 
 ```bash
 npm install @paydock-commercetools/paydock
@@ -17,87 +26,57 @@ npm install @paydock-commercetools/paydock
 yarn add @paydock-commercetools/paydock
 ```
 
-Import paydock into your application. You can add your own styling by overriding the rules in the CSS file.
+2. Import Paydock into your application. Add your own styling by overriding the rules in the CSS file.
 
 ```javascript
 import PaydockCommercetoolWidget from '@paydock-commercetools/paydock';
 import '@paydock-commercetools/paydock/dist/widget.css';
 ```
 
-You also need to copy the icons to a public directory so that they are available for download from the browser.
-we recommend placing them so that they are available via the default URL "images/paydock/*". One way to do this is to
-add the following to the package.json file:
 
-```json
-{
-  "name": "your-awesome-application-name",
-  "version": "*.*.*",
-  "scripts": {
-    "postinstall": "npm run copy-images-paydock && npm run copy-logo-paydock",
-    "copy-images-paydock": "copyfiles -u 5 node_modules/@paydock-commercetools/paydock/dist/assets/icons/* public/images/paydock/",
-    "copy-logo-paydock": "copyfiles -u 5 node_modules/@paydock-commercetools/paydock/dist/assets/* public/images/paydock/"
-  },
-  "dependencies": {
-    "copyfiles": "^2.4.1"
-  }
-}
-```
+## Embed your script and stylesheet
 
-Of course, you can specify a different path to your icons by passing the corresponding parameter to the constructor:
-
-```javascript
-new PaydockCommercetoolWidget({iconPath: 'path/to/paydock/plugin/icons/dir'});
-```
-
-### Embed script and stylesheet
-
-Embed the Paydock Commercetools script element above any other JavaScript in your checkout page.
+1. Embed the Paydock Commercetools script at the beginning of your JavaScript file on your Checkout page.
 
 ```html
-
 <script src="paydock-commercetools/widget.js"></script>
 ```
 
-Embed the Paydock Commercetools stylesheet. You can add your own styling by overriding the rules in the CSS fil
+2. Embed the Paydock Commercetools stylesheet. You can add your own styling by overriding the rules in the CSS file.
 
 ```html
-
 <link rel="stylesheet" href="paydock-commercetools/widget.css">
 ```
 
-You also need to copy the icons to a public directory so that they are available for download from the browser.
-we recommend placing them so that they are available via the default URL "images/paydock/*".
-
-Of course, you can specify a different path to your icons by passing the corresponding parameter to the constructor:
-```javascript
-new PaydockCommercetoolWidget({iconPath: 'path/to/paydock/plugin/icons/dir'});
-```
 
 ## Create a DOM element for Drop-in
 
-Create a DOM container element on your checkout page where you want Drop-in to be rendered and give it a descriptive id.
+1. Create a DOM container element on your Checkout page.
 
 ```html
-
 <div id="paydock-widget-container">
-    <!-- Paydock Checkout will be mounted here -->
+     <!-- Paydock Checkout will be mounted here -->
 </div>
 ```
+2. Place the DOM container element where you want Drop-in to be rendered, and provide a descriptive ID for your div element.
 
-# Set up Drop-in
+## Setup Drop-in
 
-## Create store for Drop-in
+1. Сreate a global store for Drop-in. 
 
-Сreate a global store where the properties of each payment method will be written when the widget is initialized.
+2. When the widget is initialized, the properties of each payment method are written to the global store. 
 
-## Initialize the payment session. Example on Vue.js
+## Initialize the payment session
 
-Create an instance of Drop-in and mount it to the container element you created.
+The following example demonstrates how to initialize a payment session with Vue.js.
 
-### 1. Load paydock script
+To do this you must create an instance of Drop-in and then mount the instance to the container element created in the setup section. Detailed instructions describing how to create and mount Drop-in are as follows:
 
-Load the paydock script (Make sure that all subsequent logic related to the widget and widget initialization happens
-after the file is loaded), for example do something like this:
+
+### 1. Load the Paydock script
+
+Load the Paydock script. Ensure that all logic related to the widget and widget initialization occurs
+after the file is loaded. For example:
 
 ```javascript
 import {loadScript} from "vue-plugin-load-script";
@@ -106,29 +85,30 @@ loadScript('https://widget.paydock.com/sdk/latest/widget.umd.js').then(() => {
     initPayment();
 })
 ```
+### 2. Setup the configuration data 
 
-### 2. Set configuration data. Example:
+The following is an example of the setup for your config data. 
 
 ```javascript
 const config = {
-    api: 'https://api.europe-west1.gcp.commercetools.com',
-    auth: {
-        host: 'https://auth.europe-west1.gcp.commercetools.com',
-        projectKey: 'paydock',
-        credentials: {
-            clientId: 'some-client-id',
-            clientSecret: 'some-client-secret',
-            scope: 'all_neaded scopes for work yor store example "manage_orders:paydock manage_customers:paydock"'
-        },
-    }
+  api: 'https://api.europe-west1.gcp.commercetools.com',
+  auth: {
+    host: 'https://auth.europe-west1.gcp.commercetools.com',
+    projectKey: 'paydock',
+    credentials: {
+      clientId: 'some-client-id',
+      clientSecret: 'some-client-secret',
+      scope: 'all_needed scopes for your store. For example, "manage_orders:paydock manage_customers:paydock"'
+    },
+  }
 }
 ```
 
-### 3. Get paydock payment configuration
+### 3. Get Paydock payment configuration
 
-First of all you need to get information about the cart, customer, and methods for working with the cart
+To initialize the checkout, you need the configuration information about the cart, customer, and the methods for working with the cart.
 
-Here in the response we get the configuration, the available payment methods and the unique payment ID.
+The following response demonstrates the full configuration, the available payment methods, and the unique payment ID.
 
 ```javascript
 import axios from "axios";
@@ -179,16 +159,16 @@ const getPaydockPaymentsConfiguration = async () => {
 }
 ```
 
-### 4. Add function initialize paydock checkout.
+### 4. Add a function that initializes the Paydock checkout
 
-Function is responsible for
+The following function initializes the Paydock checkout. You can use this function to:
 
 - Get the parameters
-- Creating a widget
-- Display of payment methods
-- Widget storage and event handling
+- Create a widget
+- Display payment methods
+- Use widget storage and event handling
 
-Create a new widget
+1. Create a new widget.
 
 ```javascript
 function initPaydockCheckout(paymentMethod, paydockStore, configuration, PaydockCommercetoolWidget) {
@@ -207,48 +187,46 @@ function initPaydockCheckout(paymentMethod, paydockStore, configuration, Paydock
 }
 ```
 
-Handle specific logic for saving card details. Сheck if the user is logged and widget.isSaveCardEnable() equal true, use
-widget render methods.
+2. Handle the logic for saving card details. Check that the customer is logged in and that widget.isSaveCardEnable() equals true. Use the widget render methods.
 
 ```javascript
-widget.renderSaveCardCheckbox();
+widget.renderSaveCardCheckbox(); 
 widget.renderCredentialsSelect();
 
 ```
 
-Set amount and currency for the widget based on the cart data
+3. Set the amount and currency for the widget based on the cart data.
 
 ```javascript
 widget.setAmount(totalPrice);
 widget.setCurrency(currencyCode);
 ```
 
-Display payment methods on the widget
+4. Display the payment methods on the widget.
 
 ```javascript
 widget.displayPaymentMethods(paymentMethod);
 ``` 
 
-Load the widget (card, bank)
+5. Load the widget.
 
 ```javascript
 widget.loadWidget()
 ```
-
-init wallets and apm`s buttons
+Examples of the init wallets and apm`s buttons are as follows:
 
 ```javascript
 widget.initAPIMSButtons(type)
 widget.initWalletButtons(type)
 ```
 
-Get widget
+6. Get the widget.
 
 ```javascript
 widget.widget
 ```
 
-### 5. Component mount
+### 5. Mount the Component
 
 ```javascript
 onMounted(async () => {
@@ -264,16 +242,15 @@ onMounted(async () => {
 
 ### 6. Add a custom hook for handling Paydock payments
 
-**During order placement, if the checkout form is valid and the payment method is paydock, we will provide the function
-of creating an order through paydock in which:**
+**Note:** During order placement, if the checkout form is valid and the payment method is Paydock, Paydock provides the function of creating an order in which:
 
-1. We receive the value of a one-time OTT token from the widget
+1. Paydock receives the value of a one-time OTT token from the widget.
 
 ```javascript
-input[name = "payment_source_card_token"]
+input[name="payment_source_card_token"]
 ```
 
-2. We collect the required data and transfer it to the widget
+2. Paydock collects the required data and transfers it to the widget.
 
 ```javascript
 widget.setAmount(totalPrice)
@@ -281,31 +258,33 @@ widget.setCurrency(currencyCode)
 widget.currencyCode.setPaymentSource(paymentSource)
 widget.setAdditionalInfo(additionalInfo)
 ```
-
-For wallets you must set form validation state:
+3. For wallets you must set a validation state in the form validation state:
 
 ```javascript
 widget.setIsValidForm(true);
 ```
 
-3. Get vault token for the payment
+4. Paydock gets the vault token for the payment.
 
 ```javascript
 widget.getVaultToken()
 ```
 
-4. We create a payment by updating the existing commercetools api "makePaymentRequest"
+5. Paydock creates a payment by updating the existing Commercetools API "makePaymentRequest".
 
-Create payment using the collected data
+### 6. Populate the createPayment function
+
+Create the payment with the collected data using the following function:
 
 ```javascript
 createPayment({...}) 
 ```
 
-In the createPayment function, you must perform 3 actions:
+ You must perform 3 actions in the createPayment function:
 
-- First. Create payment, send a request to create a payment in the Paydock system - through the extension, using the
-  custom field makePaymentRequest where "widget.paymentId" its unique payment ID from step 3.
+1. First you must create payment. 
+
+This sends a request to create a payment in the Paydock system through the extension. This uses the custom field makePaymentRequest where "widget.paymentId" is the unique payment ID from step 3, [Get Paydock Payment configuration](#3-get-paydock-payment-configuration).
 
 ```javascript
 //example for "Google Pay"
@@ -314,44 +293,44 @@ let paydockResponse = document.querySelector('[name="paydock-pay-google-pay"]').
 let chargeId = paydockResponse.data.id;
 let paymentType = 'Google Pay';
 let currentPaymentUrl = `${config.ct.api}/${config.ct.auth.projectKey}/payments/${widget.paymentId}`;
-
+ 
 paydockResponse = JSON.parse(paydockResponse);
-
+ 
 if (paydockResponse.data.status === "inreview") {
     status = 'paydock-pending'
 } else {
     status = paydockResponse.data.status === 'pending' ? 'paydock-authorize' : 'paydock-paid';
 }
-
+ 
 let response = await fetchWithToken(currentPaymentUrl, {
     method: 'GET',
     headers: headers
 });
 let currentPayment = await response.json();
-
+        
 const updateData = {
     version: currentPayment.version,
     actions: [
         {
-            action: "setCustomField",
-            name: "makePaymentRequest",
-            value: JSON.stringify({
-                orderId: widget.paymentId,
-                paymentId: widget.paymentId,
-                amount: {
-                    currency: currencyCode,
-                    value: centAmount
-                },
-                PaydockTransactionId: paymentSource,
-                PaydockPaymentStatus: status,
-                PaydockPaymentType: paymentType,
-                CommerceToolsUserId: commerceToolCustomerId,
-                SaveCard: saveCard,
-                VaultToken: vaultToken,
-                AdditionalInfo: additionalInfo
-            })
+             action: "setCustomField",
+             name: "makePaymentRequest",
+             value: JSON.stringify({
+                 orderId: widget.paymentId,
+                 paymentId: widget.paymentId,
+                 amount: {
+                     currency: currencyCode,
+                     value: centAmount
+                 },
+                 PaydockTransactionId: paymentSource,
+                 PaydockPaymentStatus: status,
+                 PaydockPaymentType: paymentType,
+                 CommerceToolsUserId: commerceToolCustomerId,
+                 SaveCard: saveCard,
+                 VaultToken: vaultToken,
+                 AdditionalInfo: additionalInfo
+             })
         }
-    ]
+   ]
 };
 const response = await fetchWithToken(currentPaymentUrl, {
     method: 'POST',
@@ -372,18 +351,9 @@ if (paymentExtensionResponse) {
 
 ```
 
-- Second. Add payment to cart and update cart required info
+2. Add the payment to the cart.
 
 ```javascript
-let orderPaymentStatus = 'Pending'
-let orderStatus = 'Open'
-let paymentExtensionResponse = payment?.custom?.fields?.PaymentExtensionResponse ?? null
-
-if(paymentExtensionResponse){
-  orderPaymentStatus = paymentExtensionResponse.orderPaymentStatus
-  orderStatus = paymentExtensionResponse.orderStatus
-}
-
 response = await fetchWithToken(`${config.ct.api}/${config.ct.auth.projectKey}/carts/${cartId}`, {
     method: 'GET',
     headers: headers
@@ -405,24 +375,8 @@ response = await fetchWithToken(`${config.ct.api}/${config.ct.auth.projectKey}/c
         ]
     }),
 });
-
-currentCart = await response.json();
-await fetchWithToken(`${config.ct.api}/${config.ct.auth.projectKey}/orders`, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    id: currentCart.id,
-    orderNumber: reference,
-    version: currentCart.version,
-    orderState: orderStatus,
-    paymentState: orderPaymentStatus
-  }),
-});
 ```
-
-- Third. Process order
+3. Process the order.
 
 ```javascript
 currentCart = await response.json();
@@ -439,18 +393,19 @@ await fetchWithToken(`${config.ct.api}/${config.ct.auth.projectKey}/orders`, {
 });
 ```
 
-5. Link the payment to the order and create the order
+4. Link the payment to the order and create the order.
 
-### 7. Transfer information to widget
 
-To pass payment information, pass the objects of this structure to the setBillingInfo() and setShippingInfo() methods.
+### 8. Transfer information to the widget
+
+1. To pass payment information, pass the objects of this structure to the setBillingInfo() and setShippingInfo() methods.
 
 ```javascript
 setBillingInfo({
     first_name: "first_name", //string
-    last_name: "last_name"l, //string
+    last_name: "last_name", //string
     email: "email", //string
-    phone: "phone"l, //string
+    phone: "phonel", //string
     address_line1: "address_line1", //string
     address_line2: "address_line2", //string
     address_city: "address_city", //string
@@ -460,27 +415,26 @@ setBillingInfo({
 });
 ```
 
-for cart item information pass the object of this structure to the setCartItems method.
+2. For cart item information, pass the object of this structure to the setCartItems method.
 
 ```javascript
 setCartItems([
     {
-        name: "name of product", // string
-        type: "type", // string  (type or category name of product)
-        quantity: 10, // int
-        item_uri: "https://some.domain/path/to/product", // string
-        image_uri: "https://cdn.some.domain/path/to/product/image",
-        amount: 123.45 // float (price with two digits after the decimal point)
+            name: "name of product", // string
+            type: "type", // string  (type or category name of product)
+            quantity: 10, // int
+            item_uri: "https://some.domain/path/to/product", // string
+            image_uri: "https://cdn.some.domain/path/to/product/image",
+            amount: 123.45 // float (price with two digits after the decimal point)
     }
 ]);
 ```
 
-### 8. Thank You page
+### 8. Thank you page
 
-After making the payment, it redirect to the Thank you page and the text is displayed depending on the completion of the
-payment.
+After making the payment, your customer is redirected to the Thank you page. Text is then displayed depending on the completion status of the payment.
 
-If status pending 'yes', we use text
+If the status is pending 'yes', the following text displays:
 
 ```json
 {
@@ -488,7 +442,7 @@ If status pending 'yes', we use text
 } 
 ```
 
-If status pending 'no', we use text
+If the status is pending 'no', the following text displays:
 
 ```json
 {
@@ -496,7 +450,7 @@ If status pending 'no', we use text
 }
 ```
 
-Use the function redirectToThankYouPage to receive a text status about the order.
+Use the function redirectToThankYouPage to receive a text about the status of the order.
 
 ```javascript
 async function redirectToThankYouPage(router) {
@@ -509,7 +463,6 @@ async function redirectToThankYouPage(router) {
     let orderStatusInReview = currentPayment.custom.fields.PaydockPaymentStatus === 'paydock-pending' ? 'yes' : 'no'
 }
 ```
-
 ## See also
 
 - [Paydock website](https://paydock.com/)
