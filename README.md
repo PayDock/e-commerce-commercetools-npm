@@ -133,7 +133,7 @@ const getPaydockPaymentsConfiguration = async () => {
                 key: "paydock-components-payment-type"
             },
             fields: {
-                commercetoolsProjectKey: config.auth.projectKey,
+                CommercetoolsProjectKey: config.auth.projectKey,
                 PaymentExtensionRequest: JSON.stringify({
                     action: "getPaymentMethodsRequest",
                     request: {}
