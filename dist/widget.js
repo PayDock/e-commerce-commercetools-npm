@@ -958,13 +958,13 @@ export default class PaydockCommercetoolWidget {
                     version: this.configuration.paymentVersion,
                     actions: [{
                         action: "setCustomField",
-                        name: "getVaultTokenRequest",
-                        value: JSON.stringify({
+                        name: "PaymentExtensionRequest",
+                        value: JSON.stringify({action:"getVaultTokenRequest",request: {
                             data,
                             userId: this.userId,
                             saveCard: this.saveCard,
                             type: this.type
-                        })
+                        }})
                     }]
                 }),
             });
@@ -974,7 +974,7 @@ export default class PaydockCommercetoolWidget {
             if (paymentVersion) {
                 this.configuration.paymentVersion = paymentVersion;
             }
-            responseData = responseData?.custom?.fields?.getVaultTokenResponse;
+            responseData = responseData?.custom?.fields?.PaymentExtensionResponse;
             if (responseData) {
                 responseData = JSON.parse(responseData);
             }
@@ -1160,6 +1160,8 @@ export default class PaydockCommercetoolWidget {
                 }
             };
 
+
+
             let response = await this.fetchWithToken(`${this.configuration.api_commercetools.url}${this.configuration.paymentId}`, {
                 method: 'POST',
                 headers: {
@@ -1167,12 +1169,14 @@ export default class PaydockCommercetoolWidget {
                 },
                 body: JSON.stringify({
                     version: this.configuration.paymentVersion,
-                    actions: [{
+                    actions:  [{
                         action: "setCustomField",
-                        name: "getStandalone3dsTokenRequest",
-                        value: JSON.stringify(data)
+                        name: "PaymentExtensionRequest",
+                        value: JSON.stringify({action:"getStandalone3dsTokenRequest",request: {
+                                request:data
+                            }})
                     }]
-                }),
+                })
             });
 
             let responseData = await response.json();
@@ -1180,7 +1184,7 @@ export default class PaydockCommercetoolWidget {
             if (paymentVersion) {
                 this.configuration.paymentVersion = paymentVersion;
             }
-            responseData = responseData?.custom?.fields?.getStandalone3dsTokenResponse;
+            responseData = responseData?.custom?.fields?.PaymentExtensionResponse;
             if (responseData) {
                 responseData = JSON.parse(responseData);
             }
